@@ -5,7 +5,7 @@
  */
 package com.auth2jpa.Service;
 
-import com.auth2jpa.Entity.OAuthClient;
+import com.auth2jpa.Entity.OauthClient;
 import com.auth2jpa.Repository.OAuthClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,11 +28,11 @@ public class ClientService implements ClientDetailsService {
 
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
-        OAuthClient clientDB = oAuthClientRepository.findOne(clientId);
+        OauthClient clientDB = oAuthClientRepository.findOne(clientId);
         return new ClientDateail(clientDB);
     }
 
-    public void add_Client(OAuthClient clientDB) {
+    public void add_Client(OauthClient clientDB) {
         clientDB.setClientSecret(bCryptPasswordEncoder.encode(clientDB.getClientSecret()));
         oAuthClientRepository.save(clientDB);
     }

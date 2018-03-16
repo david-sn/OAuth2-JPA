@@ -5,8 +5,8 @@
  */
 package com.auth2jpa.Controller;
 
-import com.auth2jpa.Entity.OAuthClient;
 import com.auth2jpa.Entity.OauthAccessToken;
+import com.auth2jpa.Entity.OauthClient;
 import com.auth2jpa.Entity.SystemRoles;
 import com.auth2jpa.Entity.Users;
 import com.auth2jpa.Repository.OauthAccessTokenRepository;
@@ -32,6 +32,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,7 +74,7 @@ public class UserClientController {
     }
 
     @PostMapping("/add-client")
-    public String addClient(@RequestBody OAuthClient user) {
+    public String addClient(@RequestBody OauthClient user) {
         clientService.add_Client(user);
         return "success";
     }
@@ -100,8 +101,8 @@ public class UserClientController {
 
     private OAuth2AccessToken generateOAuth2AccessToken(Users user, List<SystemRoles> roles, List<String> scopes) {
 
-        Map<String, String> requestParameters = new HashMap<String, String>();
-        Map<String, Serializable> extensionProperties = new HashMap<String, Serializable>();
+        Map<String, String> requestParameters = new HashMap<>();
+        Map<String, Serializable> extensionProperties = new HashMap<>();
 
         boolean approved = true;
         Set<String> responseTypes = new HashSet<>();
@@ -113,12 +114,16 @@ public class UserClientController {
         //loop roles
         authorities.add(new SimpleGrantedAuthority("ROLE_"));
 
-
         OAuth2Request oauth2Request = new OAuth2Request(requestParameters, "asd", authorities, approved, new HashSet<>(scopes), new HashSet<>(Arrays.asList("resourceIdTest")), null, responseTypes, extensionProperties);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getEmail(), "N/A", authorities);
         OAuth2Authentication auth = new OAuth2Authentication(oauth2Request, authenticationToken);
         AuthorizationServerTokenServices tokenService = configuration.getEndpointsConfigurer().getTokenServices();
         OAuth2AccessToken token = tokenService.createAccessToken(auth);
         return token;
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public String handleNullPointerException(NullPointerException npe) {
+        return "NullPointerException";
     }
 }

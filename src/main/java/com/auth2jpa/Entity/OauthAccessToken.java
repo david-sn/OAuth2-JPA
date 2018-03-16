@@ -5,7 +5,6 @@
  */
 package com.auth2jpa.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -35,7 +34,6 @@ public class OauthAccessToken implements Serializable {
     private String tokenId;
     @Lob
     @Column(name = "token")
-    @JsonIgnore
     private byte[] token;
     @Size(max = 255)
     @Column(name = "authentication_id")
@@ -48,7 +46,6 @@ public class OauthAccessToken implements Serializable {
     private String clientId;
     @Lob
     @Column(name = "authentication")
-    @JsonIgnore
     private byte[] authentication;
     @Size(max = 255)
     @Column(name = "refresh_token")
@@ -154,5 +151,5 @@ public class OauthAccessToken implements Serializable {
     public String toString() {
         return "com.auth2jpa.Entity.OauthAccessToken[ dbid=" + dbid + " ]";
     }
-
+    
 }

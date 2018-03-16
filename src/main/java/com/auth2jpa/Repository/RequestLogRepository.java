@@ -5,7 +5,7 @@
  */
 package com.auth2jpa.Repository;
 
-import com.auth2jpa.Entity.OauthClient;
+import com.auth2jpa.Entity.RequestLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
  * @author Client 1
  */
 @Repository
-public interface OAuthClientRepository extends JpaRepository<OauthClient, String> {
-    
+public interface RequestLogRepository extends JpaRepository<RequestLog, Integer> {
+
+    RequestLog findByRequestUuidOrResponseUuid(String requestUuid, String responseUuid);
 }

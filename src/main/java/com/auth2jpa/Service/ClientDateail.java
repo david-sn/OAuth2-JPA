@@ -5,7 +5,7 @@
  */
 package com.auth2jpa.Service;
 
-import com.auth2jpa.Entity.OAuthClient;
+import com.auth2jpa.Entity.OauthClient;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,9 +20,9 @@ import org.springframework.util.StringUtils;
  */
 public class ClientDateail implements ClientDetails {
 
-    OAuthClient client;
+    private OauthClient client;
 
-    public ClientDateail(OAuthClient client) {
+    public ClientDateail(OauthClient client) {
         this.client = client;
     }
 
@@ -70,12 +70,7 @@ public class ClientDateail implements ClientDetails {
     public Collection<GrantedAuthority> getAuthorities() {
         Set<String> set = StringUtils.commaDelimitedListToSet(client.getAuthorities());
         Set<GrantedAuthority> result = new HashSet<>();
-        set.forEach(authority -> result.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return authority;
-            }
-        }));
+        set.forEach(authority -> result.add((GrantedAuthority) () -> authority));
         return result;
     }
 
