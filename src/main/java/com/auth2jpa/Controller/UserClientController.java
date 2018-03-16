@@ -10,7 +10,6 @@ import com.auth2jpa.Entity.OauthClient;
 import com.auth2jpa.Entity.SystemRoles;
 import com.auth2jpa.Entity.Users;
 import com.auth2jpa.Repository.OauthAccessTokenRepository;
-import com.auth2jpa.Repository.UserRepository;
 import com.auth2jpa.Service.ClientService;
 import com.auth2jpa.Service.UserServiceImpl;
 import java.io.Serializable;
@@ -33,9 +32,11 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -49,8 +50,6 @@ public class UserClientController {
     private UserServiceImpl userServiceImpl;
     @Autowired
     private ClientService clientService;
-    @Autowired
-    UserRepository userRepository;
 
     @Autowired
     private AuthorizationServerEndpointsConfiguration configuration;
@@ -95,11 +94,10 @@ public class UserClientController {
     @PostMapping("/generate-token")
     public Object generateManualToken() {
         //create a new user to generate token for this new token like user will register from another app like facebook linked-in instagram etc those app will give json object for user data
-        Users user = userRepository.findByEmail("test@test.com");
-        return generateOAuth2AccessToken(user, null, Arrays.asList("mobile2"));
+        return generateOAuth2AccessToken("test@test.com", null);
     }
 
-    private OAuth2AccessToken generateOAuth2AccessToken(Users user, List<SystemRoles> roles, List<String> scopes) {
+    private OAuth2AccessToken generateOAuth2AccessToken(String userEmail, List<SystemRoles> roles) {
 
         Map<String, String> requestParameters = new HashMap<>();
         Map<String, Serializable> extensionProperties = new HashMap<>();
@@ -110,16 +108,21 @@ public class UserClientController {
 
         // Authorities
         List<GrantedAuthority> authorities = new ArrayList<>();
-
         //loop roles
         authorities.add(new SimpleGrantedAuthority("ROLE_"));
 
-        OAuth2Request oauth2Request = new OAuth2Request(requestParameters, "asd", authorities, approved, new HashSet<>(scopes), new HashSet<>(Arrays.asList("resourceIdTest")), null, responseTypes, extensionProperties);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getEmail(), "N/A", authorities);
+        //here must get client Detail from database and set clientId, resourceId and scopes for social users
+        OAuth2Request oauth2Request = new OAuth2Request(requestParameters, "asd", authorities, approved, new HashSet<>(Arrays.asList("social")), new HashSet<>(Arrays.asList("resourceIdTest")), null, responseTypes, extensionProperties);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userEmail, "N/A", authorities);
         OAuth2Authentication auth = new OAuth2Authentication(oauth2Request, authenticationToken);
         AuthorizationServerTokenServices tokenService = configuration.getEndpointsConfigurer().getTokenServices();
         OAuth2AccessToken token = tokenService.createAccessToken(auth);
         return token;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/tokens/revoke/{tokenId:.*}")
+    public Boolean revokeToken(@PathVariable String tokenId) {
+        return consumerTokenServices.revokeToken(tokenId);
     }
 
     @ExceptionHandler(NullPointerException.class)

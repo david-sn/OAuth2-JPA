@@ -56,7 +56,7 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
         oauthServer
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")
+                .checkTokenAccess("isAuthenticated()")//convert to permitAll to validate any token /oauth/check_token
                 .passwordEncoder(passwordEncoder);
     }
 
