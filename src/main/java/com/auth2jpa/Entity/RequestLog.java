@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -26,26 +27,6 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "RequestLog.findAll", query = "SELECT r FROM RequestLog r")})
 public class RequestLog implements Serializable {
-
-    @Column(name = "response_status")
-    private Integer responseStatus;
-    @Column(name = "response_buffer_size")
-    private Integer responseBufferSize;
-    @Size(max = 255)
-    @Column(name = "response_charachter_encoding")
-    private String responseCharachterEncoding;
-    @Size(max = 255)
-    @Column(name = "response_uuid")
-    private String responseUuid;
-    @Size(max = 1000)
-    @Column(name = "response_header")
-    private String responseHeader;
-    @Size(max = 255)
-    @Column(name = "response_content_type")
-    private String responseContentType;
-    @Size(max = 255)
-    @Column(name = "response_body")
-    private String responseBody;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -107,6 +88,25 @@ public class RequestLog implements Serializable {
     @Size(max = 10000)
     @Column(name = "headers")
     private String headers;
+    @Column(name = "response_status")
+    private Integer responseStatus;
+    @Column(name = "response_buffer_size")
+    private Integer responseBufferSize;
+    @Size(max = 255)
+    @Column(name = "response_charachter_encoding")
+    private String responseCharachterEncoding;
+    @Size(max = 255)
+    @Column(name = "response_uuid")
+    private String responseUuid;
+    @Size(max = 1000)
+    @Column(name = "response_header")
+    private String responseHeader;
+    @Size(max = 255)
+    @Column(name = "response_content_type")
+    private String responseContentType;
+    @Lob
+    @Column(name = "response_body")
+    private String responseBody;
 
     public RequestLog() {
     }

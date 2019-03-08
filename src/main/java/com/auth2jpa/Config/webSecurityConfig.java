@@ -43,7 +43,7 @@ public class webSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/add-client","/test");
+        web.ignoring().antMatchers("/add-client", "/add-user", "/generate-token");
     }
 
     @Override

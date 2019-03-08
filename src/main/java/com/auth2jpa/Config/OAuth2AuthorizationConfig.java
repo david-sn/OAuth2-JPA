@@ -1,5 +1,7 @@
 package com.auth2jpa.Config;
 
+import com.auth2jpa.CustomConfig.CustomTokenEnhanced;
+import com.auth2jpa.CustomConfig.ScopeMappingOAuth2RequestFactory;
 import com.auth2jpa.Service.ClientService;
 import com.auth2jpa.Service.UserServiceImpl;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -37,6 +39,8 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     private UserServiceImpl userDetailsService;
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private CustomTokenEnhanced customTokenEnhanced;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -46,17 +50,19 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         tokenStore = new JdbcTokenStore(dataSource);
-        endpoints
+        endpoints//.pathMapping("/oauth/token", "/Tok")
+                //.tokenEnhancer(customTokenEnhanced)
                 .tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService);
+                .userDetailsService(userDetailsService)
+                .requestFactory(new ScopeMappingOAuth2RequestFactory(clientService));
     }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
         oauthServer
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")//convert to permitAll to validate any token /oauth/check_token
+                .checkTokenAccess("permitAll()")//convert to permitAll to validate any token /oauth/check_token
                 .passwordEncoder(passwordEncoder);
     }
 

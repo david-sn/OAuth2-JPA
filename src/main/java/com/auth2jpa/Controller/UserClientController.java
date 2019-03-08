@@ -29,14 +29,17 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -59,6 +62,8 @@ public class UserClientController {
     private ConsumerTokenServices consumerTokenServices;
     @Autowired
     private OauthAccessTokenRepository oauthAccessTokenRepository;
+    @Autowired
+    private TokenEndpoint tokenEndpoint;
 
     @RequestMapping("/user")
     public Principal user(Principal user) {
@@ -95,6 +100,12 @@ public class UserClientController {
     public Object generateManualToken() {
         //create a new user to generate token for this new token like user will register from another app like facebook linked-in instagram etc those app will give json object for user data
         return generateOAuth2AccessToken("test@test.com", null);
+    }
+
+    @PostMapping(value = "/Tok")
+    public Object s(Principal principal, @RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
+        return "DONE";
+//        return tokenEndpoint.postAccessToken(principal, parameters);
     }
 
     private OAuth2AccessToken generateOAuth2AccessToken(String userEmail, List<SystemRoles> roles) {

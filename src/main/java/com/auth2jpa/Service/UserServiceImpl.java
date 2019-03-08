@@ -25,17 +25,15 @@ public class UserServiceImpl implements UserDetailsService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Users findByEmail(String email) {
-        // TODO Auto-generated method stub
         return userRepository.findByEmail(email);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String emailAddress) throws UsernameNotFoundException {
-
-        Users user = findByEmail(emailAddress);
-
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        //username is key contain a value from request body while obtain new token 
+        Users user = findByEmail(username);
         if (user == null) {
-            throw new UsernameNotFoundException(emailAddress);
+            throw new UsernameNotFoundException(username);
         }
 
         return new UserDetailsImpl(user);
@@ -47,6 +45,7 @@ public class UserServiceImpl implements UserDetailsService {
             return "User Exist";
         } else {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            user.setFullName("user_" + ((int) Math.random() * 1000));
             SystemRoles role = roleRepository.findOne((short) 2);
             List<SystemRoles> roles = new ArrayList<>();
             roles.add(role);

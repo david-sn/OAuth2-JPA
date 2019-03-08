@@ -45,19 +45,26 @@ public class Users implements Serializable {
     private String email;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 25)
-    @Column(name = "first_name")
-    private String firstName;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 25)
-    @Column(name = "last_name")
-    private String lastName;
-    @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 150)
     @Column(name = "password")
     private String password;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 25)
+    @Column(name = "full_name")
+    private String fullName;
+    @Column(name = "account_expired")
+    @NotNull
+    private boolean accountExpired;
+    @Column(name = "account_locked")
+    @NotNull
+    private boolean accountLocked;
+    @Column(name = "credentials_expired")
+    @NotNull
+    private boolean credentialsExpired;
+    @Column(name = "enabled")
+    @NotNull
+    private boolean enabled;
     @JoinTable(name = "user_roles", joinColumns = {
         @JoinColumn(name = "user_id", referencedColumnName = "user_id")}, inverseJoinColumns = {
         @JoinColumn(name = "system_role_id", referencedColumnName = "role_id")})
@@ -71,12 +78,15 @@ public class Users implements Serializable {
         this.userId = userId;
     }
 
-    public Users(Long userId, String email, String firstName, String lastName, String password) {
+    public Users(Long userId, String email, String fullName, String password) {
         this.userId = userId;
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
         this.password = password;
+        this.fullName = fullName;
+        this.accountExpired = false;
+        this.accountLocked = false;
+        this.credentialsExpired = false;
+        this.enabled = true;
     }
 
     public Long getUserId() {
@@ -95,22 +105,6 @@ public class Users implements Serializable {
         this.email = email;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -125,6 +119,46 @@ public class Users implements Serializable {
 
     public void setSystemRolesList(List<SystemRoles> systemRolesList) {
         this.systemRolesList = systemRolesList;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public boolean getAccountExpired() {
+        return accountExpired;
+    }
+
+    public void setAccountExpired(boolean accountExpired) {
+        this.accountExpired = accountExpired;
+    }
+
+    public boolean getAccountLocked() {
+        return accountLocked;
+    }
+
+    public void setAccountLocked(boolean accountLocked) {
+        this.accountLocked = accountLocked;
+    }
+
+    public boolean getCredentialsExpired() {
+        return credentialsExpired;
+    }
+
+    public void setCredentialsExpired(boolean credentialsExpired) {
+        this.credentialsExpired = credentialsExpired;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
@@ -151,5 +185,5 @@ public class Users implements Serializable {
     public String toString() {
         return "com.auth2jpa.Entity.Users[ userId=" + userId + " ]";
     }
-    
+
 }
